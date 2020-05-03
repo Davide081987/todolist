@@ -1,22 +1,28 @@
 {
-  "users": [{
-      "id": 1,
-      "user": "davide",
+  "users": [
+    {
+      "first_name": "davide",
+      "last_name": "davidehgghg",
       "email": "davide@gmail.com",
-      "phone": "3321568974"
+      "id": 2
     },
     {
-      "id": 2,
-      "user": "paola",
-      "email": "paola@gmail.com",
-      "phone": "3396834752"
+      "first_name": "tuzzolino",
+      "last_name": "donato",
+      "email": "3927970391",
+      "id": 3
     },
     {
-      "id": 3,
-      "user": "ester",
-      "email": "ester@gmail.com",
-      "phone": "3308546927"
+      "first_name": "pippo",
+      "last_name": "ciccioi",
+      "email": "trhyrthgfj",
+      "id": 4
+    },
+    {
+      "first_name": "mimmo",
+      "last_name": "pippo ",
+      "email": "mipo@gmail.com",
+      "id": 5
     }
-
   ]
 }
