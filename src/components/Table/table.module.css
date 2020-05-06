@@ -1,0 +1,25 @@
+.tableContainer {
+    display: flex;
+    flex-direction: column;
+    margin: 15px;
+    height: 50%;
+    width: 70%;
+}
+
+.tableHeader {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    background-color: lightblue;
+    border-radius: 8px;
+    border: '1px solid gray';
+
+}
+
+.tableBody {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    background-color: lightblue;
+    border: '1px solid gray';
+}

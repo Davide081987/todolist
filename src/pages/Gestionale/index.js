@@ -1,9 +1,9 @@
 import React from "react";
-import { InputLabel, Input, CircularProgress } from "@material-ui/core";
+import { InputLabel, Input, CircularProgress, Button } from "@material-ui/core";
 import details from "../../assets/details.png";
 import HttpLibrary from "../../components/HttpLibrary";
-const API_URL = "http://localhost:3001";
-const url = `${API_URL}/users`;
+import Table from '../../components/Table/';
+import Form from '../../components/Form/';
 
 class App extends React.Component {
   constructor(props) {
@@ -13,50 +13,20 @@ class App extends React.Component {
       last_name: "",
       email: "",
       id: "",
+      buttonValue: "Inserisci Utente",
+      mostraForm: null,
+      change: false,
       contacts: [],
       loading: false,
     };
   }
-
-  /*
-   * metodo che gestisce ogni campo del form , ne prende il valore
-   */
-
-  handlerField = (evt) => {
-    const target = evt.target;
-    const value = target.value;
-    const name = target.name;
-    this.setState({
-      [name]: value,
-    });
-  };
-
-  /*
-   * metodo che inserisce lo stato dei valori nel campo form , in modo che poi li possiamo modificare
-   */
-
-  userdetails = (contact) => {
-    const { first_name, last_name, email, id } = contact;
-    this.setState({ first_name, last_name, email, id });
-  };
-
   /*
    * Chiamata GET
    */
-
   getUsers = async () => {
-    /*  try {
-      const data = await http.getItem();
-      console.log("Gestionale - getUsers", data);
-      this.setState({ contacts: [...data], loading: true });
-    } catch (err) {
-      console.log(err.status);
-    }*/
-
     try {
       const http = new HttpLibrary("users", { method: "get" });
-      http
-        .getItem()
+      http.getItem()
         .then((resp) => {
           this.setState({ contacts: [...resp], loading: true });
         })
@@ -67,33 +37,28 @@ class App extends React.Component {
       console.log(err);
     }
   };
-
   /*
    * Chiamata POST
    */
-
-  onSubmit = (evt) => {
+  onSubmit = async (evt) => {
     console.log("App - onSubmit");
     const { first_name, last_name, email } = this.state;
-    const contact = {
-      first_name,
-      last_name,
-      email,
-    };
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(contact),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((resp) => {
-        if (resp.status === 201) {
-          alert("Contatto creato!");
-          this.getUsers();
-        }
-      })
-      .catch((err) => {
-        alert(err);
+    const contact = { first_name, last_name, email, };
+    try {
+      const http = new HttpLibrary("users", {
+        method: "POST",
+        body: JSON.stringify(contact),
       });
+      http.postItem()
+        .then((resp) => {
+        })
+        .catch((err) => {
+          console.log(err.status);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    this.getUsers();
     evt.preventDefault();
     this.setState({
       first_name: "",
@@ -101,81 +66,96 @@ class App extends React.Component {
       email: "",
     });
   };
-
   /*
    * Chiamata DELETE
    */
-
-  deleteUsers = (id) => {
-    const elm = `${url}/${id}`;
-    console.log("App - deleteusers", id);
-    fetch(elm, {
-      method: "DELETE",
-      headers: {
-        "Content-type": "application/json",
+  deleteUsers = async (id) => {
+    try {
+      const http = new HttpLibrary("users", {
+        method: "DELETE",
       },
-    })
-      .then(
-        (res) => res.json(),
-        console.log("deleteUsers url", `${url}/${elm}`)
-      )
-      .then((res) => console.log("deleteUsers res", res));
+        `${id}`
+      );
+      http.deleteItem()
+        .then((resp) => {
+        })
+        .catch((err) => {
+          console.log(err.status);
+        });
+    } catch (err) {
+      console.log(err);
+    }
     this.getUsers();
   };
-
   /*
    * Chiamata PUT
    */
-
-  updateContact = (e) => {
+  updateContact = async (e) => {
     console.log("App -  updateContact");
     e.preventDefault();
     const { first_name, last_name, email, id } = this.state;
-    const contact = {
-      first_name,
-      last_name,
-      email,
-    };
-    const urlUpdate = `${url}/${id}`;
-    fetch(urlUpdate, {
-      method: "PUT",
-      body: JSON.stringify(contact),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((resp) => {
-        if (resp.status === 200) {
-          alert("Contatto modificato!");
-          this.getUsers();
-        }
-      })
-      .catch((err) => {
-        alert(err);
-      });
-
+    const contact = { first_name, last_name, email, };
+    try {
+      const http = new HttpLibrary("users", {
+        method: "PUT",
+        body: JSON.stringify(contact),
+      },
+        `${id}`
+      );
+      http.putItem()()
+        .then((resp) => {
+        })
+        .catch((err) => {
+          console.log(err.status);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    this.getUsers()
+    e.preventDefault();
     this.setState({
       first_name: "",
       last_name: "",
       email: "",
     });
   };
-
+  /*
+   * metodo che gestisce ogni campo del form , ne prende il valore
+   */
+  handlerField = (evt) => {
+    const target = evt.target;
+    const value = target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value,
+    });
+  };
+  /*
+   * metodo che inserisce lo stato dei valori nel campo form , in modo che poi li possiamo modificare
+   */
+  userdetails = (contact) => {
+    const { first_name, last_name, email, id } = contact;
+    this.setState({ first_name, last_name, email, id });
+  };
   /*
    * Lyfe Cycle
    */
-
-  componentDidMount() {
+  componentDidMount () {
     console.log("App -  componentDidMount", this.state);
     this.getUsers();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate (prevProps, prevState) {
     console.log("App -  componentDidUpdate", this.state);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     console.log("App - componentWillUnmount");
   }
 
+
+
+  /*
   printBody = () => {
     const { contacts, loading } = this.state;
 
@@ -193,7 +173,7 @@ class App extends React.Component {
             <td>
               <button id={index} onClick={() => this.deleteUsers(contact.id)}>
                 X
-              </button>
+                </button>
             </td>
           </tr>
         );
@@ -208,9 +188,30 @@ class App extends React.Component {
       );
     }
   };
+*/
 
-  render() {
-    const { first_name, last_name, email } = this.state;
+
+
+
+  changeButton = () => {
+    const buttonValue = this.state.change ? 'inserisci Utente' : 'ridimensiona';
+    const mostraForm = this.state.change ? '' : <Form />;
+
+    this.setState({
+      buttonValue: buttonValue,
+      mostraForm: mostraForm,
+      change: !this.state.change
+    });
+  }
+
+
+
+
+
+  render () {
+    const { first_name, last_name, email, contacts, loading, userdetails } = this.state;
+
+    console.log("Render - loading", loading);
 
     return (
       <div
@@ -221,6 +222,20 @@ class App extends React.Component {
           marginBottom: "100px",
         }}
       >
+
+        <Table contacts={contacts} loading={loading} userdetails={userdetails} />
+
+
+        <Button style={{ backgroundColor: 'lightBlue' }} onClick={() => this.changeButton()} >
+          {this.state.buttonValue}
+        </Button>
+
+        <div>
+          {this.state.mostraForm}
+        </div>
+
+
+
         <div>
           <form
             style={{
@@ -262,24 +277,32 @@ class App extends React.Component {
             <button onClick={this.updateContact}>Aggiorna</button>
           </form>
         </div>
-        <div>
-          <h1>tabella</h1>
-          <div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Cognome</th>
-                  <th>Nome</th>
-                  <th>Email</th>
-                  <th>dettaglio</th>
-                  <th>Elimina</th>
-                </tr>
-              </thead>
-              {this.printBody()}
-            </table>
-          </div>
-        </div>
-      </div>
+
+
+
+
+
+
+
+
+
+        {/*
+      
+        <table>
+          <thead>
+            <tr>
+              <th>Cognome</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>dettaglio</th>
+              <th>Elimina</th>
+            </tr>
+          </thead>
+          {this.printBody()}
+        </table>
+*/}
+
+      </div >
     );
   }
 }
